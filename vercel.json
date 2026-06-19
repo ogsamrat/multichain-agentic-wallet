@@ -6,7 +6,9 @@
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/v1/:path*", "destination": "/api" },
-    { "source": "/health", "destination": "/api" }
+    { "source": "/health", "destination": "/api" },
+    { "source": "/relayer/:path*", "destination": "/api/relayer" },
+    { "source": "/seller/:path*", "destination": "/api/seller" }
   ],
   "crons": [{ "path": "/v1/cron", "schedule": "0 * * * *" }]
 }

@@ -33,7 +33,10 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@prism/example-paid-api": "*",
     "@prism/index": "*",
+    "@prism/relayer": "*",
     "hono": "^4.12.26"
   },
   "devDependencies": {

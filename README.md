@@ -199,6 +199,23 @@ curl "http://localhost:8787/v1/search?q=insight&asset=USDC"
 
 ---
 
+## Hosted on Vercel
+
+The repo ships a Vercel deployment (`vercel.json` + serverless functions in `api/` + a static explorer in `public/`). A single project serves the frontend and three backends:
+
+| Path               | Service                                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `/`                | Prism Index explorer (frontend)                                                                                                |
+| `/v1/*`, `/health` | Prism Index registry API                                                                                                       |
+| `/relayer/*`       | Optional treasury relayer (`/relayer/health`, `POST /relayer/api/settle`, `/relayer/api/treasury`, `POST /relayer/api/onramp`) |
+| `/seller/*`        | Live x402 example seller (`/seller/health`, `POST /seller/api/insight` → 402 until paid)                                       |
+
+Functions run on the Vercel Node runtime via `@hono/node-server`'s `getRequestListener`. The registry uses an in-memory seeded store out of the box; set `DATABASE_URL` for durability. Set `PRISM_TREASURY_EVM_KEY` to enable relayer settlement and `SELLER_PAY_TO` to direct seller payments. An hourly Vercel cron re-verifies listings via `/v1/cron`.
+
+In the Vercel project settings, use Root Directory = repo root and Framework Preset = **Other** so `vercel.json` is honored.
+
+---
+
 ## End-to-end demo
 
 ```bash

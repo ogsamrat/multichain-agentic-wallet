@@ -6,6 +6,7 @@ import {
 } from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english'
 import { bytesToHex } from '@noble/hashes/utils'
+import { derivePath } from 'ed25519-hd-key'
 
 /**
  * Hierarchical-deterministic key derivation from a single BIP-39 mnemonic.
@@ -16,8 +17,26 @@ import { bytesToHex } from '@noble/hashes/utils'
 /** Standard derivation paths per chain family. */
 export const DERIVATION_PATHS = {
   evm: "m/44'/60'/0'/0/0",
-  bitcoin: "m/84'/0'/0'/0/0"
+  bitcoin: "m/84'/0'/0'/0/0",
+  // Ed25519 chains use SLIP-0010 with fully-hardened paths.
+  solana: "m/44'/501'/0'/0'",
+  algorand: "m/44'/283'/0'/0'/0'",
+  stellar: "m/44'/148'/0'"
 } as const
+
+/**
+ * Derive a 32-byte ed25519 seed for Solana / Algorand / Stellar from the same
+ * BIP-39 mnemonic, using SLIP-0010. Returns the raw seed; each adapter turns it
+ * into its chain-native account.
+ */
+export function deriveEd25519Seed(
+  mnemonic: string,
+  path: (typeof DERIVATION_PATHS)['solana' | 'algorand' | 'stellar']
+): Uint8Array {
+  const seedHex = bytesToHex(mnemonicToSeedSync(mnemonic.trim()))
+  const { key } = derivePath(path, seedHex)
+  return new Uint8Array(key)
+}
 
 /** Generate a fresh 12-word BIP-39 mnemonic. */
 export function generateMnemonic(): string {

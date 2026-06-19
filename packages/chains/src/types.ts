@@ -92,8 +92,8 @@ export interface SimResult {
  */
 export type ChainSecret =
   | { family: 'evm'; privateKey: string }
-  | { family: 'svm'; secretKey: Uint8Array }
-  | { family: 'algorand'; mnemonic: string }
-  | { family: 'stellar'; secret: string }
-  | { family: 'bitcoin'; wif?: string; mnemonic?: string }
+  | { family: 'svm'; secretKey?: Uint8Array; seed?: Uint8Array }
+  | { family: 'algorand'; mnemonic?: string; seed?: Uint8Array }
+  | { family: 'stellar'; secret?: string; seed?: Uint8Array }
+  | { family: 'bitcoin'; wif?: string; seed?: Uint8Array }
   | { family: 'lightning'; connect: string }

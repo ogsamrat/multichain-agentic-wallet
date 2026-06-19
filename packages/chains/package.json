@@ -45,8 +45,16 @@
   "dependencies": {
     "@prism/core": "*",
     "@prism/protocol": "*",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.98.0",
+    "@stellar/stellar-sdk": "^13.0.0",
+    "@x402-avm/avm": "^2.6.1",
+    "@x402-avm/core": "^2.6.1",
     "@x402/core": "^2.8.0",
     "@x402/evm": "^2.8.0",
+    "@x402/stellar": "^2.8.0",
+    "algosdk": "^3.5.2",
+    "bs58": "^6.0.0",
     "viem": "^2.21.0"
   }
 }

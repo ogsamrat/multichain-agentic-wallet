@@ -6,7 +6,7 @@ import {
 import { Amount } from '@prism/protocol'
 import {
   AdapterRegistry,
-  createEvmAdapters,
+  createDefaultAdapters,
   isAllowanceManaging,
   isFundingUriBuilding,
   isMessageSigning,
@@ -68,7 +68,7 @@ export class Wallet {
       this.ledger.setPolicy({ ...DEFAULT_POLICY, ...this.config.policyFromEnv })
     }
     this.registry = new AdapterRegistry().registerAll(
-      opts.adapters ?? createEvmAdapters()
+      opts.adapters ?? createDefaultAdapters()
     )
     this.keyring = new Keyring({
       env: this.config.env,

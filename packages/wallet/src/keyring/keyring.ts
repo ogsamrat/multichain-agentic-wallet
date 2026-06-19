@@ -1,8 +1,13 @@
 import { KeyringLockedError, NoKeyForChainError, PrismError } from '@prism/core'
 import type { ChainFamily } from '@prism/protocol'
 import type { ChainSecret } from '@prism/chains'
+import bs58 from 'bs58'
 import { decryptSecret, encryptSecret } from './crypto.js'
-import { deriveEvmPrivateKey } from './hd.js'
+import {
+  deriveEd25519Seed,
+  deriveEvmPrivateKey,
+  DERIVATION_PATHS
+} from './hd.js'
 import { ensureHome, readKeystore, writeKeystore } from './keystore.js'
 
 /** Decrypted secret material held in memory while the wallet is unlocked. */
@@ -85,12 +90,29 @@ export class Keyring {
       case 'algorand':
         if (m.algorandMnemonic)
           return { family: 'algorand', mnemonic: m.algorandMnemonic }
+        if (m.mnemonic)
+          return {
+            family: 'algorand',
+            seed: deriveEd25519Seed(m.mnemonic, DERIVATION_PATHS.algorand)
+          }
         throw new NoKeyForChainError('algorand')
       case 'stellar':
         if (m.stellarSecret)
           return { family: 'stellar', secret: m.stellarSecret }
+        if (m.mnemonic)
+          return {
+            family: 'stellar',
+            seed: deriveEd25519Seed(m.mnemonic, DERIVATION_PATHS.stellar)
+          }
         throw new NoKeyForChainError('stellar')
       case 'svm':
+        if (m.solanaSecretKey)
+          return { family: 'svm', secretKey: bs58.decode(m.solanaSecretKey) }
+        if (m.mnemonic)
+          return {
+            family: 'svm',
+            seed: deriveEd25519Seed(m.mnemonic, DERIVATION_PATHS.solana)
+          }
         throw new NoKeyForChainError('svm')
       case 'bitcoin':
       case 'lightning':

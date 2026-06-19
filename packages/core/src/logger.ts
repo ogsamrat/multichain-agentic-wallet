@@ -29,12 +29,24 @@ export interface Logger {
   child(scope: string): Logger
 }
 
+function emit(line: string): void {
+  // Prefer stderr (Node, keeps stdout clean for MCP). On runtimes without a
+  // process.stderr stream (e.g. edge/serverless), fall back to console.
+  if (
+    typeof process !== 'undefined' &&
+    process.stderr &&
+    typeof process.stderr.write === 'function'
+  ) {
+    process.stderr.write(line + '\n')
+  } else if (typeof console !== 'undefined') {
+    console.error(line)
+  }
+}
+
 function writeStderr(scope: string, level: LogLevel, args: unknown[]): void {
   if (LEVEL_ORDER[level] < LEVEL_ORDER[envLevel()]) return
   const parts = args.map((a) => (typeof a === 'string' ? a : safeStringify(a)))
-  process.stderr.write(
-    `[${level}]${scope ? ` ${scope}` : ''} ${parts.join(' ')}\n`
-  )
+  emit(`[${level}]${scope ? ` ${scope}` : ''} ${parts.join(' ')}`)
 }
 
 function safeStringify(value: unknown): string {

@@ -32,6 +32,10 @@
     "build:bundle": "node scripts/build-mcpb.mjs",
     "prepare": "husky"
   },
+  "dependencies": {
+    "@prism/index": "*",
+    "hono": "^4.12.26"
+  },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@types/node": "^22.15.21",

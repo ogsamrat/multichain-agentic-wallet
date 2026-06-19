@@ -35,35 +35,35 @@ Prism is a monorepo containing:
 ## Architecture
 
 ```mermaid
-graph TD
-  subgraph Surfaces
-    MCP[MCP server]
-    CLI[prism CLI]
-    SDK[TypeScript SDK]
+flowchart TD
+  subgraph surfaces["Surfaces"]
+    MCP["MCP server"]
+    CLI["prism CLI"]
+    SDK["TypeScript SDK"]
   end
-  subgraph Engine[@prism/wallet]
-    KR[Keyring + encrypted keystore]
-    POL[Policy / autonomy engine]
-    LED[Durable ledger]
-    PAY[x402 payment engine]
+  subgraph engine["Wallet engine"]
+    KR["Keyring + encrypted keystore"]
+    POL["Policy + autonomy"]
+    LED["Durable ledger"]
+    PAY["x402 payment engine"]
   end
-  subgraph Chains[@prism/chains]
-    EVM[EVM]
-    SVM[Solana]
-    ALGO[Algorand]
-    XLM[Stellar]
-    BTC[Bitcoin]
-    LN[Lightning]
+  subgraph chains["Chain adapters"]
+    EVM["EVM"]
+    SVM["Solana"]
+    ALGO["Algorand"]
+    XLM["Stellar"]
+    BTC["Bitcoin"]
+    LN["Lightning"]
   end
-  IDX[Prism Index registry]
-  RLY[Relayer treasury - optional]
+  IDX["Prism Index registry"]
+  RLY["Relayer treasury (optional)"]
 
-  MCP --> Engine
-  CLI --> Engine
-  SDK --> Engine
-  Engine --> Chains
+  MCP --> engine
+  CLI --> engine
+  SDK --> engine
+  engine --> chains
   PAY --> IDX
-  PAY -. optional .-> RLY
+  PAY -.-> RLY
 ```
 
 ### Monorepo layout

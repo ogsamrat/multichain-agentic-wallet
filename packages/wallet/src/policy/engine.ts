@@ -4,7 +4,13 @@ import { DEFAULT_POLICY, type SpendingPolicy } from './policy.js'
 
 /** A value-moving action submitted for authorization. */
 export interface ValueAction {
-  kind: 'transfer' | 'swap' | 'x402' | 'allowance' | 'token_issue'
+  kind:
+    | 'transfer'
+    | 'swap'
+    | 'x402'
+    | 'allowance'
+    | 'token_issue'
+    | 'invoice_pay'
   caip2: string
   amountUsd: number
   to?: string

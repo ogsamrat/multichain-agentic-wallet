@@ -1,0 +1,25 @@
+{
+  "name": "@prism/index",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prism Index — a verified registry of agent-payable services. Only services that provably work get listed and stay listed.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "dev": "node --watch dist/server.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prism/core": "*",
+    "@prism/protocol": "*",
+    "@hono/node-server": "^1.13.0",
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.12.26",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@neondatabase/serverless": "^0.10.0"
+  }
+}

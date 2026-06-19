@@ -9,6 +9,7 @@ import {
   createDefaultAdapters,
   isAllowanceManaging,
   isFundingUriBuilding,
+  isInvoicing,
   isMessageSigning,
   isNameResolving,
   isX402Capable,
@@ -388,6 +389,63 @@ export class Wallet {
     }
   }
 
+  // ── lightning invoicing ────────────────────────────────────────────────────
+
+  async createInvoice(input: {
+    chain: string
+    amount?: string
+    memo?: string
+    expirySeconds?: number
+  }) {
+    const a = this.registry.require(input.chain)
+    if (!isInvoicing(a)) {
+      throw new UnsupportedCapabilityError('invoicing', a.info.caip2)
+    }
+    const asset = a.info.nativeAsset
+    const amountAtomic =
+      input.amount !== undefined
+        ? Amount.fromDecimal(input.amount, asset.decimals).atomic
+        : undefined
+    const secret = this.keyring.secretFor(a.info.family)
+    const res = await a.createInvoice(
+      { amountAtomic, memo: input.memo, expirySeconds: input.expirySeconds },
+      secret
+    )
+    return { ...res, chain: a.info.caip2 }
+  }
+
+  async payInvoice(input: { chain: string; invoice: string; maxFee?: string }) {
+    const a = this.registry.require(input.chain)
+    if (!isInvoicing(a)) {
+      throw new UnsupportedCapabilityError('invoicing', a.info.caip2)
+    }
+    const asset = a.info.nativeAsset
+    const decoded = await a.decodeInvoice(input.invoice)
+    this.guardPolicy({
+      kind: 'invoice_pay',
+      caip2: a.info.caip2,
+      amountUsd: 0,
+      to: decoded.payee
+    })
+    const secret = this.keyring.secretFor(a.info.family)
+    const maxFeeAtomic =
+      input.maxFee !== undefined
+        ? Amount.fromDecimal(input.maxFee, asset.decimals).atomic
+        : undefined
+    const res = await a.payInvoice(input.invoice, secret, { maxFeeAtomic })
+    this.ledger.recordSpend({
+      kind: 'invoice_pay',
+      caip2: a.info.caip2,
+      assetCaip19: asset.caip19,
+      amountAtomic: String(decoded.amountAtomic ?? 0n),
+      amountUsd: 0,
+      to: decoded.payee,
+      txHash: res.preimage,
+      status: 'recorded'
+    })
+    return { ...res, chain: a.info.caip2, decoded }
+  }
+
   async simulate(input: {
     chain: string
     to: string
@@ -523,7 +581,13 @@ export class Wallet {
   }
 
   private guardPolicy(action: {
-    kind: 'transfer' | 'x402' | 'allowance' | 'swap' | 'token_issue'
+    kind:
+      | 'transfer'
+      | 'x402'
+      | 'allowance'
+      | 'swap'
+      | 'token_issue'
+      | 'invoice_pay'
     caip2: string
     amountUsd: number
     to?: string

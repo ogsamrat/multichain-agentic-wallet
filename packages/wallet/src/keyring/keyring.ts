@@ -4,6 +4,7 @@ import type { ChainSecret } from '@prism/chains'
 import bs58 from 'bs58'
 import { decryptSecret, encryptSecret } from './crypto.js'
 import {
+  deriveBitcoinPrivateKey,
   deriveEd25519Seed,
   deriveEvmPrivateKey,
   DERIVATION_PATHS
@@ -18,6 +19,7 @@ export interface KeyMaterial {
   algorandMnemonic?: string
   stellarSecret?: string
   bitcoin?: string
+  lightning?: string
 }
 
 function normalizeHexKey(key: string): string {
@@ -115,8 +117,16 @@ export class Keyring {
           }
         throw new NoKeyForChainError('svm')
       case 'bitcoin':
+        if (m.bitcoin) return { family: 'bitcoin', wif: m.bitcoin }
+        if (m.mnemonic)
+          return {
+            family: 'bitcoin',
+            seed: deriveBitcoinPrivateKey(m.mnemonic)
+          }
+        throw new NoKeyForChainError('bitcoin')
       case 'lightning':
-        throw new NoKeyForChainError(family)
+        if (m.lightning) return { family: 'lightning', connect: m.lightning }
+        throw new NoKeyForChainError('lightning')
       default:
         throw new NoKeyForChainError(family)
     }

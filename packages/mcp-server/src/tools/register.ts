@@ -190,6 +190,33 @@ export function registerAllTools(server: McpServer, wallet: Wallet): void {
     ({ limit }) => run(() => wallet.listReceipts(limit))
   )
 
+  // ── Lightning invoicing ─────────────────────────────────────────────────────
+  server.tool(
+    'create_invoice',
+    'Create a Lightning invoice (bolt11) to receive a payment.',
+    {
+      chain: z.string().describe('Lightning chain alias, e.g. "lightning"'),
+      amount: z
+        .string()
+        .optional()
+        .describe('Amount in sats (omit for any-amount)'),
+      memo: z.string().optional().describe('Optional invoice memo'),
+      expirySeconds: z.number().optional().describe('Invoice expiry in seconds')
+    },
+    (args) => run(() => wallet.createInvoice(args))
+  )
+
+  server.tool(
+    'pay_invoice',
+    'Pay a Lightning invoice (bolt11), subject to spending policy.',
+    {
+      chain: z.string().describe('Lightning chain alias, e.g. "lightning"'),
+      invoice: z.string().describe('The bolt11 invoice to pay'),
+      maxFee: z.string().optional().describe('Max routing fee in sats')
+    },
+    (args) => run(() => wallet.payInvoice(args))
+  )
+
   // ── Allowances ─────────────────────────────────────────────────────────────
   server.tool(
     'get_allowance',

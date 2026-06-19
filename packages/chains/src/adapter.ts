@@ -136,6 +136,22 @@ export interface FundingUriBuilding {
   }): string
 }
 
+/** Lightning-style invoicing for non-account-model payment rails. */
+export interface Invoicing {
+  createInvoice(
+    req: { amountAtomic?: bigint; memo?: string; expirySeconds?: number },
+    secret: ChainSecret
+  ): Promise<{ invoice: string; paymentHash: string }>
+  payInvoice(
+    invoice: string,
+    secret: ChainSecret,
+    opts?: { maxFeeAtomic?: bigint }
+  ): Promise<{ preimage: string; feeAtomic: bigint }>
+  decodeInvoice(
+    invoice: string
+  ): Promise<{ amountAtomic?: bigint; description?: string; payee?: string }>
+}
+
 // ─── Capability type guards ──────────────────────────────────────────────────
 
 export function isNameResolving(
@@ -170,4 +186,7 @@ export function isFundingUriBuilding(
   a: ChainAdapter
 ): a is ChainAdapter & FundingUriBuilding {
   return a.supports('funding_uri')
+}
+export function isInvoicing(a: ChainAdapter): a is ChainAdapter & Invoicing {
+  return a.supports('invoicing')
 }

@@ -55,3 +55,11 @@ export function deriveEvmPrivateKey(mnemonic: string): `0x${string}` {
   if (!node.privateKey) throw new Error('Failed to derive EVM private key.')
   return `0x${bytesToHex(node.privateKey)}`
 }
+
+/** Derive the Bitcoin (BIP-84 native segwit) secp256k1 private key bytes. */
+export function deriveBitcoinPrivateKey(mnemonic: string): Uint8Array {
+  const seed = mnemonicToSeedSync(mnemonic.trim())
+  const node = HDKey.fromMasterSeed(seed).derive(DERIVATION_PATHS.bitcoin)
+  if (!node.privateKey) throw new Error('Failed to derive Bitcoin private key.')
+  return node.privateKey
+}

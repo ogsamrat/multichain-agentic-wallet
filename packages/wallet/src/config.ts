@@ -26,7 +26,8 @@ export function resolveConfig(): PrismRuntimeConfig {
     solanaSecretKey: process.env.PRISM_SOLANA_SECRET_KEY,
     algorandMnemonic: process.env.PRISM_ALGORAND_MNEMONIC,
     stellarSecret: process.env.PRISM_STELLAR_SECRET,
-    bitcoin: process.env.PRISM_BTC_XPRV
+    bitcoin: process.env.PRISM_BTC_WIF,
+    lightning: process.env.PRISM_LN_CONNECT
   }
   const hasEnvKey = Object.values(env).some(
     (v) => typeof v === 'string' && v.length > 0

@@ -10,7 +10,9 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/coverage/**',
       '**/.wrangler/**',
-      '**/*.mcpb'
+      '**/*.mcpb',
+      'public/**',
+      'clients/**'
     ]
   },
   js.configs.recommended,

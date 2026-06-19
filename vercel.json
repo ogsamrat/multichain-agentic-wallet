@@ -10,5 +10,5 @@
     { "source": "/relayer/:path*", "destination": "/api/relayer" },
     { "source": "/seller/:path*", "destination": "/api/seller" }
   ],
-  "crons": [{ "path": "/v1/cron", "schedule": "0 * * * *" }]
+  "crons": [{ "path": "/v1/cron", "schedule": "0 0 * * *" }]
 }

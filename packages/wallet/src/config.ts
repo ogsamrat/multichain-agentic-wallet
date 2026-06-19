@@ -48,7 +48,8 @@ export function resolveConfig(): PrismRuntimeConfig {
     hasKeystore: keystoreExists(),
     defaultNetwork: process.env.PRISM_NETWORK ?? 'base-sepolia',
     policyFromEnv,
-    indexUrl: process.env.PRISM_INDEX_URL,
+    // Defaults to the hosted Prism Index so discovery works out of the box.
+    indexUrl: process.env.PRISM_INDEX_URL ?? 'https://prism-index.vercel.app',
     relayerUrl: process.env.PRISM_RELAYER_URL
   }
 }

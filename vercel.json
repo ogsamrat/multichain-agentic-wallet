@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "installCommand": "HUSKY=0 npm install",
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/v1/:path*", "destination": "/api" },

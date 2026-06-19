@@ -1,0 +1,49 @@
+{
+  "name": "@prism/chains",
+  "version": "0.1.0",
+  "description": "Pluggable chain adapters behind one capability-flagged interface, plus the adapter registry.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./evm": {
+      "types": "./dist/evm/index.d.ts",
+      "import": "./dist/evm/index.js"
+    },
+    "./solana": {
+      "types": "./dist/solana/index.d.ts",
+      "import": "./dist/solana/index.js"
+    },
+    "./algorand": {
+      "types": "./dist/algorand/index.d.ts",
+      "import": "./dist/algorand/index.js"
+    },
+    "./stellar": {
+      "types": "./dist/stellar/index.d.ts",
+      "import": "./dist/stellar/index.js"
+    },
+    "./bitcoin": {
+      "types": "./dist/bitcoin/index.d.ts",
+      "import": "./dist/bitcoin/index.js"
+    },
+    "./lightning": {
+      "types": "./dist/lightning/index.d.ts",
+      "import": "./dist/lightning/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prism/core": "*",
+    "@prism/protocol": "*"
+  }
+}

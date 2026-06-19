@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/protocol" },
+    { "path": "packages/core" },
+    { "path": "packages/chains" },
+    { "path": "packages/wallet" },
+    { "path": "packages/sdk" },
+    { "path": "packages/mcp-server" },
+    { "path": "apps/cli" },
+    { "path": "apps/relayer" },
+    { "path": "examples/paid-api" }
+  ]
+}

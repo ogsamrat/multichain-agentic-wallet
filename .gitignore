@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+# MCP desktop bundle
+.mcpb-build/
+*.mcpb
+
+# Local data / secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+
+# Local agent/harness config
+.claude/
+
+# Wrangler / serverless local state
+.wrangler/
+.vercel/
+
+# Test / coverage
+coverage/

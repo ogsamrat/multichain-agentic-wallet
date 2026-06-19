@@ -1,0 +1,21 @@
+{
+  "name": "@prism/protocol",
+  "version": "0.1.0",
+  "description": "Shared protocol types: x402 payment shapes, CAIP-2/CAIP-19 chain identifiers, and atomic-amount math.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  }
+}

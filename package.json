@@ -1,0 +1,49 @@
+{
+  "name": "prism",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prism — a self-custodial multichain wallet that lets AI agents discover, authorize, and settle payments across every chain.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "examples/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ogsamrat/multichain-agentic-wallet"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b",
+    "clean": "tsc -b --clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,mts,mjs,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,mts,mjs,json,md}\"",
+    "verify:naming": "node scripts/verify-naming.mjs",
+    "build:bundle": "node scripts/build-mcpb.mjs",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/node": "^22.15.21",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.0",
+    "vitest": "^3.2.1"
+  }
+}

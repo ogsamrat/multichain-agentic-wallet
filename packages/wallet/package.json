@@ -1,0 +1,26 @@
+{
+  "name": "@prism/wallet",
+  "version": "0.1.0",
+  "description": "Wallet engine: encrypted keyring, spending-policy/autonomy engine, persistent ledger, session keys, and the x402 payment engine.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prism/chains": "*",
+    "@prism/core": "*",
+    "@prism/protocol": "*"
+  }
+}

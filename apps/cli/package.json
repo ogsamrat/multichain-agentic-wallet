@@ -1,0 +1,24 @@
+{
+  "name": "@prism/cli",
+  "version": "0.1.0",
+  "description": "The `prism` command-line wallet.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "prism": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prism/chains": "*",
+    "@prism/core": "*",
+    "@prism/protocol": "*",
+    "@prism/sdk": "*",
+    "@prism/wallet": "*"
+  }
+}

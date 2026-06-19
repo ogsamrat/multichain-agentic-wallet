@@ -15,7 +15,14 @@ function flag(name: string): string | undefined {
 }
 
 function positionals(): string[] {
-  return rest.filter((a) => !a.startsWith('--'))
+  // Positionals always precede flags, so stop at the first --flag (this avoids
+  // mistaking a flag's value for a positional).
+  const out: string[] = []
+  for (const a of rest) {
+    if (a.startsWith('--')) break
+    out.push(a)
+  }
+  return out
 }
 
 function out(data: unknown): void {

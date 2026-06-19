@@ -1,0 +1,16 @@
+name = "prism-index"
+main = "dist/worker.js"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Re-verify due listings on a schedule. The health engine only touches listings
+# whose nextCheckAt is due, so a tight cron is cheap.
+[triggers]
+crons = ["*/2 * * * *"]
+
+# Optional bindings (set via `wrangler secret put` in production):
+#   DATABASE_URL      Postgres connection string (enables the Drizzle store)
+#   PRISM_SUBMIT_KEY  required to gate POST /v1/listings
+#   PRISM_ADMIN_KEY   required to gate POST /v1/admin/run-checks
+[vars]
+# PRISM_LOG_LEVEL = "info"

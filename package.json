@@ -19,8 +19,8 @@
     "url": "https://github.com/ogsamrat/multichain-agentic-wallet"
   },
   "scripts": {
-    "build": "tsc -b",
-    "typecheck": "tsc -b",
+    "build": "tsc -b && npm run build --workspace @prism/index",
+    "typecheck": "tsc -b && npm run build --workspace @prism/index",
     "clean": "tsc -b --clean",
     "test": "vitest run",
     "test:watch": "vitest",

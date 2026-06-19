@@ -193,6 +193,10 @@ A registry that is strictly better than a static directory: **a listing exists o
 - It indexes **more than APIs** — MCP servers, model endpoints, datasets, RPC infra, and more — each with a type-specific probe.
 - Discovery is **multichain and economic**: filter by accepted chain, asset, price ceiling, uptime, and reliability score; results carry ready-to-run `callHint`s so an agent can invoke them immediately via `x402_fetch`.
 
+**Listing a service** — anyone can submit through the explorer's "List your service" form or `POST /v1/listings`. The registry runs the real protocol handshake up front and rejects anything that doesn't work, so junk never gets in.
+
+**Durability** — with no database the registry uses an in-memory store (resets on serverless cold start). For permanent listings, set a Postgres connection string as `DATABASE_URL` (or create a Vercel Postgres, which injects `POSTGRES_URL`); it switches to the durable, edge-compatible Neon-backed store automatically — no code change.
+
 Run it locally:
 
 ```bash

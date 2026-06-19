@@ -145,20 +145,20 @@ const res = await wallet.x402Fetch('https://api.example.com/paid', {
 
 Keys may come from an encrypted keystore (`init_wallet` / `prism init`) or from the environment for headless use:
 
-| Variable                                   | Purpose                                               |
-| ------------------------------------------ | ----------------------------------------------------- | ------- |
-| `PRISM_SEED`                               | BIP-39 recovery phrase; derives keys for every chain  |
-| `PRISM_EVM_PRIVATE_KEY`                    | EVM key override (`0x…`)                              |
-| `PRISM_SOLANA_SECRET_KEY`                  | Solana secret (base58) override                       |
-| `PRISM_ALGORAND_MNEMONIC`                  | Algorand 25-word override                             |
-| `PRISM_STELLAR_SECRET`                     | Stellar `S…` secret override                          |
-| `PRISM_BTC_WIF`                            | Bitcoin WIF override                                  |
-| `PRISM_LN_CONNECT`                         | Lightning backend, `https://node                      | apikey` |
-| `PRISM_NETWORK`                            | Default chain alias (e.g. `base`)                     |
-| `PRISM_MAX_PER_CALL` / `PRISM_MAX_PER_DAY` | Spending caps (USD)                                   |
-| `PRISM_AUTONOMY`                           | `full_autonomous` \| `session` \| `human_in_the_loop` |
-| `PRISM_INDEX_URL`                          | Prism Index base URL for discovery                    |
-| `PRISM_RELAYER_URL`                        | Optional relayer base URL                             |
+| Variable                                   | Purpose                                              |
+| ------------------------------------------ | ---------------------------------------------------- |
+| `PRISM_SEED`                               | BIP-39 recovery phrase; derives keys for every chain |
+| `PRISM_EVM_PRIVATE_KEY`                    | EVM key override (`0x…`)                             |
+| `PRISM_SOLANA_SECRET_KEY`                  | Solana secret (base58) override                      |
+| `PRISM_ALGORAND_MNEMONIC`                  | Algorand 25-word override                            |
+| `PRISM_STELLAR_SECRET`                     | Stellar `S…` secret override                         |
+| `PRISM_BTC_WIF`                            | Bitcoin WIF override                                 |
+| `PRISM_LN_CONNECT`                         | Lightning backend, `https://node` + API key          |
+| `PRISM_NETWORK`                            | Default chain alias (e.g. `base`)                    |
+| `PRISM_MAX_PER_CALL` / `PRISM_MAX_PER_DAY` | Spending caps (USD)                                  |
+| `PRISM_AUTONOMY`                           | `full_autonomous` / `session` / `human_in_the_loop`  |
+| `PRISM_INDEX_URL`                          | Prism Index base URL for discovery                   |
+| `PRISM_RELAYER_URL`                        | Optional relayer base URL                            |
 
 State lives under `~/.prism` (override with `PRISM_HOME`): `keystore.json` (encrypted), `config.json`, `ledger.json`.
 

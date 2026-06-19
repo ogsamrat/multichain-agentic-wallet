@@ -12,14 +12,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.0",
     "@prism/core": "*",
     "@prism/protocol": "*",
     "@hono/node-server": "^1.13.0",
-    "drizzle-orm": "^0.36.0",
     "hono": "^4.12.26",
     "zod": "^3.25.76"
-  },
-  "devDependencies": {
-    "@neondatabase/serverless": "^0.10.0"
   }
 }

@@ -169,6 +169,39 @@ button {
 button:hover {
   filter: brightness(1.08);
 }
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 14px;
+}
+.panel.submit {
+  margin-top: 14px;
+}
+.submit-intro {
+  margin: 10px 0 0;
+  font-size: 13px;
+}
+#submit-form {
+  margin-top: 14px;
+}
+.note {
+  margin-top: 12px;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 13px;
+  border: 1px solid var(--line);
+}
+.note.ok {
+  background: rgba(25, 195, 166, 0.14);
+  border-color: rgba(25, 195, 166, 0.4);
+  color: var(--accent2);
+}
+.note.bad {
+  background: rgba(255, 92, 124, 0.12);
+  border-color: rgba(255, 92, 124, 0.4);
+  color: var(--bad);
+}
 .muted {
   color: var(--muted);
 }

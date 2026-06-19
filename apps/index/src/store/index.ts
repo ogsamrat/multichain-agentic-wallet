@@ -4,19 +4,36 @@ import type { Store } from './store.js'
 export type { Store } from './store.js'
 export { MemoryStore } from './memory.js'
 
+/** Connection-string env vars, in priority order. Covers Vercel's Neon/Postgres
+ * integration (which injects `POSTGRES_URL`) and a plain `DATABASE_URL`. */
+const DB_ENV_VARS = [
+  'DATABASE_URL',
+  'POSTGRES_URL',
+  'POSTGRES_PRISMA_URL',
+  'NEON_DATABASE_URL'
+]
+
+function databaseUrl(): string | undefined {
+  for (const key of DB_ENV_VARS) {
+    const v = process.env[key]
+    if (v && v.length > 0) return v
+  }
+  return undefined
+}
+
 /**
  * Returns the configured store.
  *
  * Default: a zero-dependency {@link MemoryStore}, so the app runs with no
- * external services. When `DATABASE_URL` is set, the Drizzle/Postgres store is
- * imported lazily (its driver deps never load otherwise) and used instead.
+ * external services. When a Postgres connection string is present in the
+ * environment, the durable Neon-backed store is imported lazily (its driver
+ * never loads otherwise) and used instead.
  */
 export async function getStore(): Promise<Store> {
-  const databaseUrl = process.env.DATABASE_URL
-  if (databaseUrl) {
-    // Lazy import keeps Postgres/Drizzle out of the default (edge/dev) bundle.
+  const url = databaseUrl()
+  if (url) {
     const { PostgresStore } = await import('./postgres.js')
-    return PostgresStore.create(databaseUrl)
+    return PostgresStore.create(url)
   }
   return new MemoryStore()
 }

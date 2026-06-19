@@ -81,6 +81,64 @@
         </div>
       </section>
 
+      <section class="panel submit">
+        <div class="row spread">
+          <strong>List your service</strong>
+          <button id="toggle-submit" class="ghost" type="button">＋ Add a service</button>
+        </div>
+        <p class="muted submit-intro">
+          Submit an x402 API, MCP server, model, dataset, or RPC endpoint. The
+          registry runs a real protocol handshake before it accepts you — if the
+          endpoint doesn't actually work, it's rejected.
+        </p>
+        <div id="submit-form" hidden>
+          <div class="controls">
+            <div>
+              <label for="s-type">Type</label>
+              <select id="s-type">
+                <option value="x402_http_api">x402 HTTP API</option>
+                <option value="mcp_server">MCP server</option>
+                <option value="model_endpoint">Model endpoint</option>
+                <option value="dataset">Dataset</option>
+                <option value="rpc_infra">RPC / infra</option>
+                <option value="compute">Compute</option>
+                <option value="storage">Storage</option>
+                <option value="agent_service">Agent service</option>
+              </select>
+            </div>
+            <div>
+              <label for="s-method">HTTP method</label>
+              <input id="s-method" placeholder="POST" />
+            </div>
+            <div>
+              <label for="s-handle">Provider handle</label>
+              <input id="s-handle" placeholder="you" />
+            </div>
+            <div class="full">
+              <label for="s-name">Name</label>
+              <input id="s-name" placeholder="My Transcription API" />
+            </div>
+            <div class="full">
+              <label for="s-url">Endpoint URL</label>
+              <input id="s-url" placeholder="https://api.you.com/v1/stt" />
+            </div>
+            <div class="full">
+              <label for="s-desc">Description</label>
+              <input id="s-desc" placeholder="What it does, briefly." />
+            </div>
+            <div class="full">
+              <label for="s-tags">Tags (comma-separated)</label>
+              <input id="s-tags" placeholder="stt, audio, usdc" />
+            </div>
+          </div>
+          <div class="actions">
+            <button id="s-go" type="button">Submit for verification</button>
+            <span class="muted" id="s-status"></span>
+          </div>
+          <div id="s-result"></div>
+        </div>
+      </section>
+
       <div class="results" id="results"></div>
 
       <footer>

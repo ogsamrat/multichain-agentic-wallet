@@ -109,5 +109,69 @@ $('go').addEventListener('click', search)
 )
 ;['type', 'sort'].forEach((id) => $(id).addEventListener('change', search))
 
+// --- Submit a service -------------------------------------------------------
+function submitNote(html, ok) {
+  $('s-result').innerHTML = `<div class="note ${ok ? 'ok' : 'bad'}">${html}</div>`
+}
+
+async function submitService() {
+  const type = $('s-type').value
+  const name = $('s-name').value.trim()
+  const url = $('s-url').value.trim()
+  if (!name || !url) {
+    submitNote('Name and endpoint URL are required.', false)
+    return
+  }
+  const body = { type, name, endpointUrl: url, description: $('s-desc').value.trim() }
+  const method = $('s-method').value.trim()
+  if (method) body.httpMethod = method
+  const handle = $('s-handle').value.trim()
+  if (handle) body.providerHandle = handle
+  const tags = $('s-tags').value
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean)
+  if (tags.length) body.tags = tags
+  if (type === 'x402_http_api') {
+    body.callHint = { method: method || 'POST', url, pay_with: 'x402_fetch' }
+  }
+
+  $('s-status').textContent = 'Verifying endpoint…'
+  $('s-result').innerHTML = ''
+  try {
+    const res = await fetch('/v1/listings', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    const data = await res.json().catch(() => ({}))
+    $('s-status').textContent = ''
+    if (res.ok) {
+      submitNote(
+        `✓ Submitted <b>${data.slug}</b> — status <b>${data.status || 'pending_verification'}</b>. It becomes searchable once verification confirms it.`,
+        true
+      )
+      loadStats()
+      search()
+    } else {
+      const inner = data.detail && data.detail.detail && data.detail.detail.error
+      submitNote(
+        `✗ ${data.message || data.error || 'Submission failed'}${inner ? ' — ' + inner : ''}`,
+        false
+      )
+    }
+  } catch (e) {
+    $('s-status').textContent = ''
+    submitNote('Network error: ' + (e && e.message ? e.message : e), false)
+  }
+}
+
+$('toggle-submit').addEventListener('click', () => {
+  const f = $('submit-form')
+  f.hidden = !f.hidden
+  $('toggle-submit').textContent = f.hidden ? '＋ Add a service' : '− Hide'
+})
+$('s-go').addEventListener('click', submitService)
+
 loadStats()
 search()

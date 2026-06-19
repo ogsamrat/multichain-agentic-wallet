@@ -8,6 +8,8 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-gray?style=flat-square)
 
+**Live:** [prism-index.vercel.app](https://prism-index.vercel.app) — explorer UI, registry API (`/v1/*`), treasury relayer (`/relayer/*`), and a paid x402 endpoint (`/seller/*`).
+
 ---
 
 AI agents can reason, plan, and execute. **Prism lets them pay** — autonomously, across chains, without leaking keys or blowing a budget.
@@ -82,6 +84,8 @@ apps/
   relayer/      optional managed treasury + on-ramp
 examples/
   paid-api/     a minimal x402 seller for end-to-end testing
+clients/        polyglot example agents (Python, Go, Ruby) that query the Index
+api/            Vercel serverless functions  ·  public/  the explorer frontend
 ```
 
 ---
@@ -201,7 +205,7 @@ curl "http://localhost:8787/v1/search?q=insight&asset=USDC"
 
 ## Hosted on Vercel
 
-The repo ships a Vercel deployment (`vercel.json` + serverless functions in `api/` + a static explorer in `public/`). A single project serves the frontend and three backends:
+**Live at [prism-index.vercel.app](https://prism-index.vercel.app).** The repo ships a Vercel deployment (`vercel.json` + serverless functions in `api/` + a static explorer in `public/`). A single project serves the frontend and three backends:
 
 | Path               | Service                                                                                                                        |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |

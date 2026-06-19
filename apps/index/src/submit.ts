@@ -10,13 +10,15 @@
  */
 import { z } from 'zod'
 import { probe } from './probers/index.js'
+import { reliabilityScore } from './scoring.js'
 import type { Store } from './store/store.js'
 import type {
   CallHint,
   Listing,
   PaymentOption,
   Provider,
-  ServiceType
+  ServiceType,
+  VerificationRun
 } from './types.js'
 
 const SERVICE_TYPES = [
@@ -178,17 +180,8 @@ export async function submitListing(
     )
   }
 
-  // Persist the listing (still pending_verification — the engine promotes it).
-  await store.createListing(candidate)
-
-  // Seed payment options from the live handshake when the prober found them.
-  const options: PaymentOption[] = result.paymentOptions ?? []
-  if (options.length > 0) {
-    await store.upsertPaymentOptions(candidate.id, options)
-  }
-
-  // Record the pre-flight as the listing's first verification run.
-  await store.recordVerificationRun({
+  // The pre-flight is the listing's first verification run.
+  const run: VerificationRun = {
     id: genId('vr'),
     listingId: candidate.id,
     runAt: now,
@@ -203,7 +196,29 @@ export async function submitListing(
           ? JSON.stringify(result.detail)
           : undefined,
     errorClass: result.errorClass
-  })
+  }
+
+  // A passing pre-flight makes the listing immediately discoverable; the health
+  // engine maintains it (and demotes/delists it) from here. We don't make
+  // submitters wait for the first scheduled check, which can be a day apart.
+  candidate.verifiedWorking = true
+  candidate.status = result.outcome === 'pass' ? 'healthy' : 'degraded'
+  candidate.consecutivePass = 1
+  candidate.lastVerifiedAt = now
+  candidate.p50LatencyMs = result.latencyMs ?? candidate.p50LatencyMs
+  candidate.reliabilityScore = reliabilityScore(candidate, [run])
+  candidate.nextCheckAt = new Date(
+    Date.now() + candidate.checkIntervalS * 1000
+  ).toISOString()
+
+  await store.createListing(candidate)
+
+  // Seed payment options from the live handshake when the prober found them.
+  const options: PaymentOption[] = result.paymentOptions ?? []
+  if (options.length > 0) {
+    await store.upsertPaymentOptions(candidate.id, options)
+  }
+  await store.recordVerificationRun(run)
 
   return candidate
 }

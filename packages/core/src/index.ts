@@ -1,1 +1,2 @@
-export const CORE_PACKAGE = '@prism/core'
+export * from './errors.js'
+export * from './logger.js'

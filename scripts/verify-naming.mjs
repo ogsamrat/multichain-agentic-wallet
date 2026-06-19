@@ -25,7 +25,7 @@ const BANNED = [
   /bazaar/i,
   /pizza/i,
   /\.x402\b/i,
-  /ALGORAND_MNEMONIC/,
+  /(?<!PRISM_)ALGORAND_MNEMONIC/,
   /\bPIXA_/,
   /\bPIZZA_/
 ]

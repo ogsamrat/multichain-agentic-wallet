@@ -1,0 +1,135 @@
+{
+  "manifest_version": "0.3",
+  "name": "prism",
+  "display_name": "Prism — Multichain Wallet for AI Agents",
+  "version": "0.1.0",
+  "icon": "prism-icon.png",
+  "description": "A self-custodial multichain wallet for Claude. Check balances and settle x402 payments across EVM, Solana, Algorand, Stellar, and Bitcoin Lightning — keys stay encrypted on your machine.",
+  "long_description": "Prism gives Claude a self-custodial multichain wallet. Tools include list_chains, get_balances, get_portfolio, send, pay, x402_fetch, swap-ready transfers, allowance management, and discover_services (the verified Prism Index registry). Keys are stored in an encrypted keystore under ~/.prism and never leave your machine. A spending policy (per-call and per-day caps, allow/deny lists, autonomy modes) protects your funds, and a durable ledger keeps budgets across restarts.",
+  "author": {
+    "name": "Prism"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ogsamrat/multichain-agentic-wallet"
+  },
+  "keywords": [
+    "x402",
+    "wallet",
+    "mcp",
+    "multichain",
+    "usdc",
+    "payments",
+    "agent-commerce"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "PRISM_SEED": "${user_config.seed_phrase}",
+        "PRISM_EVM_PRIVATE_KEY": "${user_config.evm_private_key}",
+        "PRISM_SOLANA_SECRET_KEY": "${user_config.solana_secret_key}",
+        "PRISM_NETWORK": "${user_config.network}",
+        "PRISM_MAX_PER_CALL": "${user_config.max_per_call}",
+        "PRISM_MAX_PER_DAY": "${user_config.max_per_day}",
+        "PRISM_INDEX_URL": "${user_config.index_url}"
+      }
+    }
+  },
+  "user_config": {
+    "seed_phrase": {
+      "type": "string",
+      "title": "Recovery Phrase (seed)",
+      "description": "BIP-39 recovery phrase used to derive keys for every chain. Stored in your OS keychain.",
+      "required": false,
+      "sensitive": true
+    },
+    "evm_private_key": {
+      "type": "string",
+      "title": "EVM Private Key (optional)",
+      "description": "0x-prefixed key for EVM chains. Overrides the seed for EVM.",
+      "required": false,
+      "sensitive": true
+    },
+    "solana_secret_key": {
+      "type": "string",
+      "title": "Solana Secret Key (optional)",
+      "description": "Base58 secret key for Solana. Overrides the seed for Solana.",
+      "required": false,
+      "sensitive": true
+    },
+    "network": {
+      "type": "string",
+      "title": "Default Network",
+      "description": "Default chain, e.g. base, base-sepolia, arbitrum, optimism, polygon.",
+      "required": false,
+      "default": "base-sepolia"
+    },
+    "max_per_call": {
+      "type": "string",
+      "title": "Max per Payment (USD)",
+      "description": "Maximum allowed per single payment.",
+      "required": false,
+      "default": "0.10"
+    },
+    "max_per_day": {
+      "type": "string",
+      "title": "Max per Day (USD)",
+      "description": "Maximum total allowed per calendar day.",
+      "required": false,
+      "default": "20.00"
+    },
+    "index_url": {
+      "type": "string",
+      "title": "Prism Index URL (optional)",
+      "description": "Base URL of a Prism Index registry for service discovery.",
+      "required": false
+    }
+  },
+  "tools": [
+    {
+      "name": "list_chains",
+      "description": "List supported chains, capabilities, and addresses."
+    },
+    {
+      "name": "get_balances",
+      "description": "Native and token balances for a chain."
+    },
+    {
+      "name": "get_portfolio",
+      "description": "Balances across all configured chains."
+    },
+    {
+      "name": "send",
+      "description": "Send native gas or tokens to an address or name."
+    },
+    {
+      "name": "pay",
+      "description": "Sign an x402 payment authorization header."
+    },
+    {
+      "name": "x402_fetch",
+      "description": "Fetch a URL, auto-paying any 402."
+    },
+    {
+      "name": "discover_services",
+      "description": "Search the verified Prism Index registry."
+    },
+    {
+      "name": "get_spending_report",
+      "description": "Spending, budget, and recent receipts."
+    },
+    {
+      "name": "set_policy",
+      "description": "Update spending caps and autonomy."
+    }
+  ],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=20.0.0" }
+  }
+}

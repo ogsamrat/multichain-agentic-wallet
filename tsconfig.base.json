@@ -21,5 +21,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true
-  }
+  },
+  "exclude": ["**/*.test.ts", "node_modules", "dist"]
 }

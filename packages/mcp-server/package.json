@@ -23,10 +23,12 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@prism/chains": "*",
     "@prism/core": "*",
     "@prism/protocol": "*",
     "@prism/sdk": "*",
-    "@prism/wallet": "*"
+    "@prism/wallet": "*",
+    "zod": "^3.25.76"
   }
 }

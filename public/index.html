@@ -3,151 +3,166 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Prism Index — verified agent-payable services</title>
+    <title>Prism Index — a verified registry for the agent economy</title>
     <meta
       name="description"
-      content="A registry of agent-payable services where a listing exists only while it provably works. Multichain, x402-native, auto-verified."
+      content="The Prism Index verifies every x402 API, MCP server, and endpoint with a real handshake — and delists it the moment it breaks. Multichain. Live."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <div class="wrap">
-      <header class="hero">
-        <div class="brand">
-          <div class="logo"></div>
-          <h1>Prism Index</h1>
-        </div>
-        <p class="tag">
-          A registry of agent-payable services where a listing exists
-          <strong>only while it provably works</strong>. Every x402 endpoint is
-          verified by a real HTTP&nbsp;402 handshake, health-checked on a
-          schedule, scored, and auto-delisted when it breaks. Multichain by
-          construction.
+    <div class="grain"></div>
+
+    <nav class="nav">
+      <div class="brand"><span class="glyph"></span> Prism</div>
+      <div class="nav-links">
+        <a href="#explore">Explore</a>
+        <a href="#list">List a service</a>
+        <a href="/v1/search" target="_blank" rel="noopener">API</a>
+        <a href="https://github.com/ogsamrat/multichain-agentic-wallet" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </nav>
+    <hr class="spectrum" />
+
+    <main>
+      <section class="hero wrap" id="explore">
+        <p class="eyebrow">Prism Index</p>
+        <h1>Services your agent can <em>actually</em> pay for.</h1>
+        <p class="lede">
+          A verified registry for the agent economy. Every x402 API, MCP server,
+          and endpoint is proven with a real protocol handshake — re-checked on a
+          schedule and delisted the moment it breaks. Multichain. Live.
         </p>
-        <div class="links">
-          <a href="https://github.com/ogsamrat/multichain-agentic-wallet" target="_blank" rel="noopener">GitHub ↗</a>
-          <a href="/v1/search" target="_blank" rel="noopener">/v1/search API ↗</a>
-          <a href="/seller/health" target="_blank" rel="noopener">example seller ↗</a>
-          <a href="/health" target="_blank" rel="noopener">/health ↗</a>
+
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.2-3.2" />
+          </svg>
+          <input id="q" placeholder="Search transcription, rpc, datasets, mcp…" autocomplete="off" />
+          <button id="go">Search</button>
         </div>
-      </header>
 
-      <div class="stat-row" id="stats"></div>
-
-      <section class="panel">
-        <div class="controls">
-          <div class="full">
-            <label for="q">Search</label>
-            <input id="q" placeholder="e.g. insight, transcription, rpc, mcp tools" />
-          </div>
-          <div>
+        <div class="filters">
+          <span class="field">
             <label for="type">Type</label>
             <select id="type">
-              <option value="">Any type</option>
-              <option value="x402_http_api">x402 HTTP API</option>
+              <option value="">Any</option>
+              <option value="x402_http_api">x402 API</option>
               <option value="mcp_server">MCP server</option>
-              <option value="model_endpoint">Model endpoint</option>
+              <option value="model_endpoint">Model</option>
               <option value="dataset">Dataset</option>
               <option value="rpc_infra">RPC / infra</option>
               <option value="compute">Compute</option>
               <option value="storage">Storage</option>
-              <option value="agent_service">Agent service</option>
+              <option value="agent_service">Agent</option>
             </select>
-          </div>
-          <div>
-            <label for="asset">Pay asset</label>
+          </span>
+          <span class="field">
+            <label for="asset">Asset</label>
             <input id="asset" placeholder="USDC" />
-          </div>
-          <div>
-            <label for="chain">Chain (CAIP-2)</label>
+          </span>
+          <span class="field">
+            <label for="chain">Chain</label>
             <input id="chain" placeholder="eip155:8453" />
-          </div>
-          <div>
-            <label for="maxprice">Max price (USD)</label>
+          </span>
+          <span class="field">
+            <label for="maxprice">Max $</label>
             <input id="maxprice" type="number" step="0.001" placeholder="0.05" />
-          </div>
-          <div>
+          </span>
+          <span class="field">
             <label for="sort">Sort</label>
             <select id="sort">
               <option value="score">Reliability</option>
               <option value="price">Price</option>
               <option value="uptime">Uptime</option>
             </select>
-          </div>
+          </span>
         </div>
-        <div class="actions">
-          <button id="go">Search</button>
-          <span class="muted" id="status"></span>
+
+        <div class="stats" id="stats"></div>
+      </section>
+
+      <section class="listing wrap">
+        <div class="section-label">
+          <h2>Verified services</h2>
+          <span class="count" id="status"></span>
+        </div>
+        <div class="results" id="results"></div>
+      </section>
+
+      <section class="submit wrap" id="list">
+        <div class="submit-card">
+          <div class="submit-top">
+            <h2>List your service</h2>
+            <button id="toggle-submit" class="btn" type="button">Add a service</button>
+          </div>
+          <p class="submit-intro">
+            Submit an x402 API, MCP server, model, dataset, or RPC endpoint. The
+            registry runs the real handshake before it accepts you — if the
+            endpoint doesn't work, it's rejected on the spot.
+          </p>
+
+          <div id="submit-form" hidden>
+            <div class="form">
+              <div class="col-2">
+                <label for="s-type">Type</label>
+                <select id="s-type">
+                  <option value="x402_http_api">x402 HTTP API</option>
+                  <option value="mcp_server">MCP server</option>
+                  <option value="model_endpoint">Model endpoint</option>
+                  <option value="dataset">Dataset</option>
+                  <option value="rpc_infra">RPC / infra</option>
+                  <option value="compute">Compute</option>
+                  <option value="storage">Storage</option>
+                  <option value="agent_service">Agent service</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="s-method">HTTP method</label>
+                <input id="s-method" placeholder="POST" />
+              </div>
+              <div class="col-2">
+                <label for="s-handle">Provider handle</label>
+                <input id="s-handle" placeholder="you" />
+              </div>
+              <div class="col-3">
+                <label for="s-name">Name</label>
+                <input id="s-name" placeholder="My Transcription API" />
+              </div>
+              <div class="col-3">
+                <label for="s-url">Endpoint URL</label>
+                <input id="s-url" placeholder="https://api.you.com/v1/stt" />
+              </div>
+              <div class="col-6">
+                <label for="s-desc">Description</label>
+                <input id="s-desc" placeholder="What it does, briefly." />
+              </div>
+              <div class="col-6">
+                <label for="s-tags">Tags</label>
+                <input id="s-tags" placeholder="stt, audio, usdc" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button id="s-go" class="btn solid" type="button">Submit for verification</button>
+              <span class="form-status" id="s-status"></span>
+            </div>
+            <div id="s-result"></div>
+          </div>
         </div>
       </section>
 
-      <section class="panel submit">
-        <div class="row spread">
-          <strong>List your service</strong>
-          <button id="toggle-submit" class="ghost" type="button">＋ Add a service</button>
-        </div>
-        <p class="muted submit-intro">
-          Submit an x402 API, MCP server, model, dataset, or RPC endpoint. The
-          registry runs a real protocol handshake before it accepts you — if the
-          endpoint doesn't actually work, it's rejected.
-        </p>
-        <div id="submit-form" hidden>
-          <div class="controls">
-            <div>
-              <label for="s-type">Type</label>
-              <select id="s-type">
-                <option value="x402_http_api">x402 HTTP API</option>
-                <option value="mcp_server">MCP server</option>
-                <option value="model_endpoint">Model endpoint</option>
-                <option value="dataset">Dataset</option>
-                <option value="rpc_infra">RPC / infra</option>
-                <option value="compute">Compute</option>
-                <option value="storage">Storage</option>
-                <option value="agent_service">Agent service</option>
-              </select>
-            </div>
-            <div>
-              <label for="s-method">HTTP method</label>
-              <input id="s-method" placeholder="POST" />
-            </div>
-            <div>
-              <label for="s-handle">Provider handle</label>
-              <input id="s-handle" placeholder="you" />
-            </div>
-            <div class="full">
-              <label for="s-name">Name</label>
-              <input id="s-name" placeholder="My Transcription API" />
-            </div>
-            <div class="full">
-              <label for="s-url">Endpoint URL</label>
-              <input id="s-url" placeholder="https://api.you.com/v1/stt" />
-            </div>
-            <div class="full">
-              <label for="s-desc">Description</label>
-              <input id="s-desc" placeholder="What it does, briefly." />
-            </div>
-            <div class="full">
-              <label for="s-tags">Tags (comma-separated)</label>
-              <input id="s-tags" placeholder="stt, audio, usdc" />
-            </div>
-          </div>
-          <div class="actions">
-            <button id="s-go" type="button">Submit for verification</button>
-            <span class="muted" id="s-status"></span>
-          </div>
-          <div id="s-result"></div>
-        </div>
-      </section>
-
-      <div class="results" id="results"></div>
-
-      <footer>
-        Prism — a self-custodial multichain agentic wallet + verified registry.
-        This explorer queries the live <span class="chip">/v1/search</span>
-        endpoint. Listings shown are verified-working; broken endpoints are
-        removed automatically.
+      <footer class="foot wrap">
+        <span>Prism — multichain agentic wallet &amp; verified registry</span>
+        <span><a href="https://github.com/ogsamrat/multichain-agentic-wallet" target="_blank" rel="noopener">github.com/ogsamrat</a></span>
       </footer>
-    </div>
+    </main>
 
     <script src="/app.js" defer></script>
   </body>

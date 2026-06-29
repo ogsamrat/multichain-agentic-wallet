@@ -1,7 +1,7 @@
 // Prism Index explorer — queries the live /v1/search API and renders results.
 const $ = (id) => document.getElementById(id)
 const short = (a) =>
-  a && a.length > 14 ? a.slice(0, 8) + '…' + a.slice(-4) : a || ''
+  a && a.length > 16 ? a.slice(0, 9) + '…' + a.slice(-4) : a || ''
 
 const CHAIN_NAMES = {
   'eip155:1': 'Ethereum',
@@ -10,41 +10,63 @@ const CHAIN_NAMES = {
   'eip155:42161': 'Arbitrum',
   'eip155:10': 'Optimism',
   'eip155:137': 'Polygon',
-  'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp': 'Solana'
+  'eip155:43114': 'Avalanche',
+  'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp': 'Solana',
+  'stellar:pubnet': 'Stellar',
+  'bip122:000000000019d6689c085ae165831e93': 'Bitcoin',
+  'lightning:bolt11': 'Lightning'
 }
-const chainName = (caip2) => CHAIN_NAMES[caip2] || caip2
+const chainName = (c) => CHAIN_NAMES[c] || c
+
+const TYPE_LABELS = {
+  x402_http_api: 'x402 api',
+  mcp_server: 'mcp server',
+  model_endpoint: 'model',
+  rpc_infra: 'rpc',
+  agent_service: 'agent'
+}
+const typeLabel = (t) => TYPE_LABELS[t] || (t || '').replace(/_/g, ' ')
+
+const esc = (s) =>
+  String(s ?? '').replace(
+    /[&<>"]/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]
+  )
 
 function card(r) {
   const pay = (r.paymentOptions || [])
     .map(
       (p) =>
-        `<div class="opt"><span class="chip">${chainName(p.network)}</span><span>${p.assetSymbol || p.asset || ''}</span><b>$${Number(p.priceUsd).toFixed(3)}</b><span class="muted chip">→ ${short(p.payTo)}</span></div>`
+        `<div class="opt"><span class="net">${esc(chainName(p.network))}</span><span class="dot">·</span><span>${esc(p.assetSymbol || p.asset || '')}</span><span class="price">$${Number(p.priceUsd).toFixed(3)}</span><span class="to">${esc(short(p.payTo))}</span></div>`
     )
     .join('')
+
   const hint = r.callHint
-    ? `<div class="hint">${r.callHint.method || 'GET'} ${r.callHint.url || ''} ${r.callHint.pay_with ? '· pay_with: ' + r.callHint.pay_with : ''}</div>`
+    ? `<div class="hint">${esc(r.callHint.method || 'GET')} ${esc(r.callHint.url || '')}${r.callHint.pay_with ? ' · pay via ' + esc(r.callHint.pay_with) : ''}</div>`
     : ''
+
   const up = r.uptime30d != null ? (r.uptime30d * 100).toFixed(1) + '%' : '—'
   const p95 =
     r.latencyMs && r.latencyMs.p95 != null ? r.latencyMs.p95 + 'ms' : '—'
-  return `<article class="card">
-      <div class="row spread">
-        <h3>${r.name || r.slug}</h3>
-        <div class="row">
-          ${r.verifiedWorking ? '<span class="badge ok">✓ verified live</span>' : ''}
-          <span class="badge type">${r.type}</span>
-        </div>
+
+  return `<article class="entry">
+    <div class="entry-head">
+      <div class="entry-title">
+        <h3>${esc(r.name || r.slug)}</h3>
+        <span class="type">${esc(typeLabel(r.type))}</span>
       </div>
-      <div class="desc">${r.description || ''}</div>
-      <div class="meta">
-        <span>reliability <b>${Math.round(r.reliabilityScore ?? 0)}</b>/100</span>
-        <span>uptime <b>${up}</b></span>
-        <span>p95 <b>${p95}</b></span>
-        <span>slug <b>${r.slug}</b></span>
-      </div>
-      ${pay ? `<div class="pay">${pay}</div>` : ''}
-      ${hint}
-    </article>`
+      ${r.verifiedWorking ? '<span class="verified"><i></i>verified</span>' : ''}
+    </div>
+    <p class="entry-desc">${esc(r.description || '')}</p>
+    <div class="entry-meta">
+      <div class="m"><b>${Math.round(r.reliabilityScore ?? 0)}</b><label>Reliability</label></div>
+      <div class="m"><b>${up}</b><label>Uptime 30d</label></div>
+      <div class="m"><b>${p95}</b><label>p95 latency</label></div>
+      <div class="m slug"><b>${esc(r.slug)}</b><label>Slug</label></div>
+    </div>
+    ${pay ? `<div class="pay">${pay}</div>` : ''}
+    ${hint}
+  </article>`
 }
 
 async function search() {
@@ -55,21 +77,22 @@ async function search() {
   if ($('chain').value.trim()) p.set('chain', $('chain').value.trim())
   if ($('maxprice').value) p.set('max_price_usd', $('maxprice').value)
   if ($('sort').value) p.set('sort', $('sort').value)
-  $('status').textContent = 'Searching…'
+  $('status').textContent = 'searching…'
   try {
     const res = await fetch('/v1/search?' + p.toString(), {
       headers: { accept: 'application/json' }
     })
     const data = await res.json()
     const results = data.results || []
-    $('status').textContent = `${data.count ?? results.length} result(s)`
+    const n = data.count ?? results.length
+    $('status').textContent = `${n} ${n === 1 ? 'result' : 'results'}`
     $('results').innerHTML = results.length
       ? results.map(card).join('')
-      : '<div class="empty">No verified services match your filters yet.</div>'
+      : '<div class="empty">No services match your filters yet.</div>'
   } catch (e) {
-    $('status').textContent = 'Error: ' + (e && e.message ? e.message : e)
+    $('status').textContent = 'error'
     $('results').innerHTML =
-      '<div class="empty">Could not reach the registry API.</div>'
+      '<div class="empty">Could not reach the registry.</div>'
   }
 }
 
@@ -87,27 +110,16 @@ async function loadStats() {
       for (const p of r.paymentOptions || []) chains.add(p.network)
     }
     $('stats').innerHTML = [
-      ['verified services', data.count ?? results.length],
-      ['service types', types.size],
-      ['payable chains', chains.size]
+      ['Verified', data.count ?? results.length],
+      ['Service types', types.size],
+      ['Payable chains', chains.size]
     ]
-      .map(
-        ([l, n]) =>
-          `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`
-      )
+      .map(([l, n]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`)
       .join('')
   } catch {
     $('stats').innerHTML = ''
   }
 }
-
-$('go').addEventListener('click', search)
-;['q', 'asset', 'chain', 'maxprice'].forEach((id) =>
-  $(id).addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') search()
-  })
-)
-;['type', 'sort'].forEach((id) => $(id).addEventListener('change', search))
 
 // --- Submit a service -------------------------------------------------------
 function submitNote(html, ok) {
@@ -136,7 +148,7 @@ async function submitService() {
     body.callHint = { method: method || 'POST', url, pay_with: 'x402_fetch' }
   }
 
-  $('s-status').textContent = 'Verifying endpoint…'
+  $('s-status').textContent = 'verifying endpoint…'
   $('s-result').innerHTML = ''
   try {
     const res = await fetch('/v1/listings', {
@@ -148,7 +160,7 @@ async function submitService() {
     $('s-status').textContent = ''
     if (res.ok) {
       submitNote(
-        `✓ Submitted <b>${data.slug}</b> — status <b>${data.status || 'pending_verification'}</b>. It becomes searchable once verification confirms it.`,
+        `Listed <b>${esc(data.slug)}</b> — ${esc(data.status || 'pending_verification')}. It becomes searchable once verification confirms it.`,
         true
       )
       loadStats()
@@ -156,20 +168,28 @@ async function submitService() {
     } else {
       const inner = data.detail && data.detail.detail && data.detail.detail.error
       submitNote(
-        `✗ ${data.message || data.error || 'Submission failed'}${inner ? ' — ' + inner : ''}`,
+        `${esc(data.message || data.error || 'Submission failed')}${inner ? ' — ' + esc(inner) : ''}`,
         false
       )
     }
   } catch (e) {
     $('s-status').textContent = ''
-    submitNote('Network error: ' + (e && e.message ? e.message : e), false)
+    submitNote('Network error: ' + esc(e && e.message ? e.message : e), false)
   }
 }
+
+$('go').addEventListener('click', search)
+;['q', 'asset', 'chain', 'maxprice'].forEach((id) =>
+  $(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') search()
+  })
+)
+;['type', 'sort'].forEach((id) => $(id).addEventListener('change', search))
 
 $('toggle-submit').addEventListener('click', () => {
   const f = $('submit-form')
   f.hidden = !f.hidden
-  $('toggle-submit').textContent = f.hidden ? '＋ Add a service' : '− Hide'
+  $('toggle-submit').textContent = f.hidden ? 'Add a service' : 'Close'
 })
 $('s-go').addEventListener('click', submitService)
 

@@ -8,7 +8,8 @@ export interface SpendEntry {
   caip2: string
   assetCaip19?: string
   amountAtomic: string
-  amountUsd: number
+  /** USD value, or `null` when the asset has no known price. */
+  amountUsd: number | null
   to?: string
   domain?: string
   txHash?: string
@@ -24,7 +25,8 @@ export interface ReceiptEntry {
   scheme: string
   assetCaip19?: string
   amountAtomic: string
-  amountUsd: number
+  /** USD value, or `null` when the asset has no known price. */
+  amountUsd: number | null
   payTo: string
   headerName: string
   status: 'signed' | 'settled' | 'failed'
@@ -87,7 +89,7 @@ export abstract class BaseLedger implements Ledger {
     return this.data.spends
       .filter((s) => s.status !== 'failed' && MS_DAY_KEY(s.ts) === today)
       .filter((s) => (caip2 ? s.caip2 === caip2 : true))
-      .reduce((sum, s) => sum + s.amountUsd, 0)
+      .reduce((sum, s) => sum + (s.amountUsd ?? 0), 0)
   }
 
   recentSpends(limit = 20): SpendEntry[] {

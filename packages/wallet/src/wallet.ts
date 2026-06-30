@@ -29,8 +29,14 @@ import { IndexClient, type DiscoverQuery } from './discovery/index-client.js'
 
 const STABLES = new Set(['USDC', 'USDT', 'DAI', 'PYUSD', 'USDP', 'GUSD'])
 
-function usdValue(symbol: string, amountDecimal: string): number {
-  return STABLES.has(symbol.toUpperCase()) ? parseFloat(amountDecimal) : 0
+/**
+ * Value a transfer in USD. Only USD-pegged stablecoins have a known price; for
+ * any other asset we return `null` ("unknown") rather than `0`, so the policy
+ * engine fails closed and asks for confirmation instead of silently waving an
+ * unpriced spend past the USD caps.
+ */
+function usdValue(symbol: string, amountDecimal: string): number | null {
+  return STABLES.has(symbol.toUpperCase()) ? parseFloat(amountDecimal) : null
 }
 
 function fmtBalance(b: Balance) {
@@ -424,7 +430,8 @@ export class Wallet {
     this.guardPolicy({
       kind: 'invoice_pay',
       caip2: a.info.caip2,
-      amountUsd: 0,
+      // Lightning/native amounts have no known USD price → fail closed.
+      amountUsd: null,
       to: decoded.payee
     })
     const secret = this.keyring.secretFor(a.info.family)
@@ -438,7 +445,7 @@ export class Wallet {
       caip2: a.info.caip2,
       assetCaip19: asset.caip19,
       amountAtomic: String(decoded.amountAtomic ?? 0n),
-      amountUsd: 0,
+      amountUsd: null,
       to: decoded.payee,
       txHash: res.preimage,
       status: 'recorded'
@@ -515,6 +522,7 @@ export class Wallet {
         0,
         parseFloat(policy.maxPerDayUsd) - spentToday
       ).toFixed(4),
+      sessionActive: this.policy.sessionActive,
       policy,
       recentSpends: this.ledger.recentSpends(10),
       recentReceipts: this.ledger.recentReceipts(10)
@@ -573,6 +581,7 @@ export class Wallet {
 
   lock() {
     this.keyring.lock()
+    this.policy.endSession()
     return { locked: true }
   }
 
@@ -589,7 +598,7 @@ export class Wallet {
       | 'token_issue'
       | 'invoice_pay'
     caip2: string
-    amountUsd: number
+    amountUsd: number | null
     to?: string
     domain?: string
   }): void {

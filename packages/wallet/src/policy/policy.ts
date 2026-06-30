@@ -1,4 +1,10 @@
-/** How much autonomy the agent has over spending. */
+/**
+ * How much autonomy the agent has over spending:
+ * - `full_autonomous` — spend freely within the configured caps, no prompts.
+ * - `session` — one confirmation opens an autonomous session; subsequent
+ *   spends proceed within the caps until the wallet locks (which ends it).
+ * - `human_in_the_loop` — every value-moving action requires confirmation.
+ */
 export type AutonomyMode = 'full_autonomous' | 'session' | 'human_in_the_loop'
 
 /** A user-controlled spending policy. All caps are USD decimal strings. */
